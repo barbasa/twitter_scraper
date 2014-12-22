@@ -1,0 +1,49 @@
+** Running the application
+* In order to run the application these CPAN modules need to be installed
+
+Net::Twitter
+Test::More
+Test::MockObject
+Gearman::Server
+DBD::mysql
+Moose
+MooseX::Traits
+DBIx::Class
+YAML::XS
+
+* A MySql DB is required with a database called 'tweets'. Run the following command in order to create it:
+
+delimiter $$
+
+CREATE DATABASE `tweets` /*!40100 DEFAULT CHARACTER SET utf8 */$$
+
+* The dump of the schema needs to be imported (db_dump.sql file)
+* The credentials in Dispatcher::Store might be changed. They're set in DB::Schema->connect()
+
+* To start the application:
+- start Gearmand
+gearmand -d
+
+- start workers
+perl workers/worker_fetch_url.pl
+perl workers/worker_store.pl
+
+-start application
+perl start.pl
+
+* Some output will explain what is going on. In the DB will be possible to see the import of some data of tweets (Tweet table)
+
+** Running tests
+* This command will run the test suite:
+
+prove -r -vvv t/
+
+** Considerations
+
+Due to a lack of time the application is not ideal and there is a lot to improve. Here a list of the major improvementes required
+* There are some TODO and XXX in the code to explain improvements
+* All the configurations are hard coded (DB, twitter uesr name, ...). Not nice...not a single instace id the DB connnection for example!
+* Classes for the workers haven't been implemented...at the moment the workers are just simple script under the workers directory
+* The tests are not mocking the Gearman service!!!...This is not nice but I have preferred to have a tests in place even if not proper unit one.
+* There are no tests for Dispatcher::Store...not really a TDD approach for this part of the code unfortunately :(
+* I haven't spent time implementing a complex DB, I have preferred to focus on the scalability of the system

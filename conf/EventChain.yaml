@@ -1,0 +1,5 @@
+---
+FetchUrl:
+    next: Store
+Store:
+    next: NONE
